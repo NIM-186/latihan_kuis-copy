@@ -1,0 +1,244 @@
+# Dokumentasi Penggunaan `url_launcher`
+
+`url_launcher` adalah package Flutter yang digunakan untuk **membuka aplikasi lain dari Flutter**, seperti:
+
+* Browser (website)
+* Email
+* Telepon
+* SMS
+* Maps
+
+---
+# 1. Import Package
+Tambahkan di file Dart:
+```dart
+import 'package:url_launcher/url_launcher.dart';
+```
+
+Pastikan juga sudah ditambahkan di `pubspec.yaml`:
+```yaml
+dependencies:
+  url_launcher: ^6.2.5
+```
+Bisa pake Syntax di CMD / Terminal dibawah ini, nanti auto nambah di pubsec.yaml:
+flutter pub add url_launcher
+---
+
+# 2. Membuka Website
+
+Digunakan untuk membuka halaman web seperti **Wikipedia**.
+
+### Contoh
+
+```dart
+onPressed: () async {
+  final Uri url = Uri.parse("https://www.wikipedia.org");
+
+  if (!await launchUrl(url)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Tidak dapat membuka website"),
+      ),
+    );
+  }
+}
+```
+
+Penjelasan:
+
+* `Uri.parse()` → mengubah string menjadi URI
+* `launchUrl()` → membuka link di browser
+
+---
+
+# 3. Mengirim Email
+
+Digunakan untuk membuka **aplikasi email** dengan alamat tujuan.
+
+### Contoh
+
+```dart
+onPressed: () async {
+  final Uri email = Uri(
+    scheme: 'mailto',
+    path: 'example@email.com',
+    query: 'subject=Hello Flutter&body=Ini pesan dari aplikasi',
+  );
+
+  await launchUrl(email);
+}
+```
+
+Penjelasan:
+
+* `scheme: 'mailto'` → membuka aplikasi email
+* `path` → alamat email tujuan
+* `query` → isi subject dan body email
+
+Contoh hasil:
+
+```
+To: example@email.com
+Subject: Hello Flutter
+Body: Ini pesan dari aplikasi
+```
+
+---
+
+# 4. Membuka Telepon
+
+Digunakan untuk **langsung membuka dialer telepon**.
+
+### Contoh
+
+```dart
+onPressed: () async {
+  final Uri phone = Uri(
+    scheme: 'tel',
+    path: '08123456789',
+  );
+
+  await launchUrl(phone);
+}
+```
+
+Penjelasan:
+
+* `tel:` digunakan untuk membuka aplikasi telepon.
+
+---
+
+# 5. Mengirim SMS
+
+Digunakan untuk membuka **aplikasi SMS**.
+
+### Contoh
+
+```dart
+onPressed: () async {
+  final Uri sms = Uri(
+    scheme: 'sms',
+    path: '08123456789',
+    query: 'body=Halo dari aplikasi Flutter',
+  );
+
+  await launchUrl(sms);
+}
+```
+
+Penjelasan:
+
+* `sms:` membuka aplikasi pesan
+* `body` mengisi pesan otomatis
+
+---
+
+# 6. Membuka Google Maps
+
+Digunakan untuk membuka lokasi di **Google Maps**.
+
+### Contoh
+
+```dart
+onPressed: () async {
+  final Uri maps = Uri.parse(
+    "https://www.google.com/maps/search/?api=1&query=-7.7956,110.3695",
+  );
+
+  await launchUrl(maps);
+}
+```
+
+Penjelasan:
+
+* `query` berisi koordinat latitude dan longitude.
+
+---
+
+# 7. Struktur Umum URL Launcher
+
+Biasanya menggunakan format:
+
+```dart
+final Uri uri = Uri(
+  scheme: 'protocol',
+  path: 'target',
+  query: 'parameter',
+);
+```
+
+Contoh protocol:
+
+| Protocol | Fungsi          |
+| -------- | --------------- |
+| https    | membuka website |
+| mailto   | membuka email   |
+| tel      | membuka telepon |
+| sms      | membuka SMS     |
+
+---
+
+# 8. Contoh Fungsi Reusable (Lebih Rapi)
+
+Kadang lebih baik membuat fungsi khusus.
+
+```dart
+Future<void> openWebsite(String link) async {
+  final Uri url = Uri.parse(link);
+
+  if (!await launchUrl(url)) {
+    throw Exception("Tidak dapat membuka $link");
+  }
+}
+```
+
+Penggunaan:
+
+```dart
+openWebsite("https://flutter.dev");
+```
+
+---
+
+# 9. Contoh Penggunaan di Aplikasi Movie
+
+Yang kamu pakai di `DetailPage`:
+
+```dart
+final Uri url = Uri.parse(widget.model.movieUrl);
+
+if (!await launchUrl(url)) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text("Tidak dapat membuka wikipedia"),
+    ),
+  );
+}
+```
+
+Digunakan untuk membuka:
+
+```
+Wikipedia movie
+```
+
+---
+
+# Catatan Penting
+
+Jika membuka URL dari internet pastikan:
+
+* URL valid
+* diawali dengan `https://`
+
+Contoh benar:
+
+```
+https://www.wikipedia.org
+```
+
+Contoh salah:
+
+```
+www.wikipedia.org
+```
