@@ -1,0 +1,351 @@
+Aku buatkan **catatan kecil / dokumentasi ringkas** yang bisa kamu pakai sebagai **contekan saat belajar atau sebelum kuis praktik**. Fokusnya pada **fitur penting di aplikasimu**, termasuk **membuka link dengan `url_launcher`**.
+
+---
+
+# Catatan Kecil Flutter – Latihan Kuis Movie App
+
+# 2. Navigasi Halaman
+
+Navigasi digunakan untuk **berpindah dari satu halaman ke halaman lain**.
+
+### Pindah halaman biasa
+
+```dart
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => DetailPage(model: movie),
+  ),
+);
+```
+
+Penjelasan:
+
+* `Navigator.push()` → membuka halaman baru
+* `MaterialPageRoute` → membuat route dengan animasi Material
+
+---
+
+### Pindah halaman dan mengganti halaman sebelumnya
+
+Digunakan saat **login atau logout**.
+
+```dart
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (context) => LoginPage(),
+  ),
+);
+```
+
+Penjelasan:
+
+* `pushReplacement` → halaman lama dihapus
+* user **tidak bisa kembali dengan tombol back**
+
+---
+
+# 3. Menampilkan Notifikasi (SnackBar)
+
+SnackBar digunakan untuk **memberi pesan ke user**.
+
+Contoh:
+
+```dart
+ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(
+    content: Text("Login Berhasil!"),
+    backgroundColor: Colors.green,
+  ),
+);
+```
+
+Digunakan untuk:
+
+* Login berhasil
+* Login gagal
+* Input kosong
+* Error membuka link
+
+---
+
+# 4. Menggunakan `setState`
+
+`setState()` digunakan untuk **memperbarui UI ketika data berubah**.
+
+Contoh bookmark movie:
+
+```dart
+setState(() {
+  widget.model.isfav = !widget.model.isfav;
+});
+```
+
+Penjelasan:
+
+* `!` berarti **toggle**
+* true → false
+* false → true
+
+---
+
+# 5. Menggunakan ListView.builder
+
+Digunakan untuk **menampilkan daftar data secara dinamis**.
+
+Contoh:
+
+```dart
+ListView.builder(
+  itemCount: movieList.length,
+  itemBuilder: (context, index) {
+    final movie = movieList[index];
+    return Text(movie.title);
+  },
+);
+```
+
+Penjelasan:
+
+* `itemCount` → jumlah item
+* `itemBuilder` → membangun item satu per satu
+
+Keuntungan:
+
+* lebih **efisien untuk list banyak**
+
+---
+
+# 6. Menggunakan Callback Function
+
+Digunakan untuk **mengirim fungsi dari parent ke child widget**.
+
+Contoh:
+
+Di `MovieListPage`:
+
+```dart
+void toggleFavorite(MovieModel movie) {
+  setState(() {
+    movie.isfav = !movie.isfav;
+  });
+}
+```
+
+Dikirim ke `MovieScreen`:
+
+```dart
+MovieScreen(
+  onToggleFav: toggleFavorite,
+);
+```
+
+Dipanggil di child:
+
+```dart
+onToggleFav(movie);
+```
+
+---
+
+# 7. Mengambil Input TextField
+
+Digunakan untuk **membaca input dari user**.
+
+Contoh:
+
+```dart
+TextField(
+  onChanged: (v) => uNameValue = v,
+)
+```
+
+Penjelasan:
+
+* setiap user mengetik
+* nilai langsung disimpan ke variabel
+
+---
+
+# 8. Menggunakan TextEditingController
+
+Digunakan untuk **mengontrol TextField**.
+
+Contoh:
+
+```dart
+final TextEditingController reviewController = TextEditingController();
+```
+
+Digunakan di TextField:
+
+```dart
+TextField(
+  controller: reviewController,
+)
+```
+
+Mengambil nilai:
+
+```dart
+reviewController.text
+```
+
+Membersihkan input:
+
+```dart
+reviewController.clear();
+```
+
+---
+
+# 9. Membuka Link dengan `url_launcher`
+
+Digunakan untuk **membuka website dari aplikasi**.
+
+### Import package
+
+```dart
+import 'package:url_launcher/url_launcher.dart';
+```
+
+---
+
+### Contoh penggunaan
+
+```dart
+onPressed: () async {
+
+  final Uri url = Uri.parse(widget.model.movieUrl);
+
+  if (!await launchUrl(url)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Tidak dapat membuka wikipedia"),
+      ),
+    );
+  }
+}
+```
+
+Penjelasan:
+
+* `Uri.parse()` → mengubah string menjadi URI
+* `launchUrl()` → membuka link di browser
+* `async/await` → karena prosesnya asynchronous
+
+---
+
+# 10. Menampilkan Gambar dari Internet
+
+Digunakan untuk menampilkan **poster movie**.
+
+Contoh:
+
+```dart
+Image.network(
+  movie.imgUrl,
+  width: 100,
+  height: 140,
+  fit: BoxFit.cover,
+)
+```
+
+Penjelasan:
+
+* `Image.network()` → mengambil gambar dari URL
+* `fit: BoxFit.cover` → menyesuaikan ukuran gambar
+
+---
+
+# 11. Menampilkan Gambar dari Assets
+
+Jika menggunakan gambar lokal.
+
+Contoh:
+
+```dart
+Image.asset(
+  'assets/images/logo.png',
+  width: 120,
+  height: 120,
+)
+```
+
+Pastikan sudah didaftarkan di:
+
+```
+pubspec.yaml
+```
+
+---
+
+# 12. Widget Layout yang Digunakan
+
+Beberapa widget penting:
+
+| Widget   | Fungsi                          |
+| -------- | ------------------------------- |
+| Scaffold | struktur halaman                |
+| AppBar   | header halaman                  |
+| Column   | layout vertikal                 |
+| Row      | layout horizontal               |
+| Expanded | mengisi ruang kosong            |
+| SizedBox | memberi jarak                   |
+| Padding  | memberi ruang di sekitar widget |
+| Card     | tampilan seperti kartu          |
+
+---
+
+# 13. SafeArea
+
+Digunakan agar UI tidak tertutup:
+
+* status bar
+* notch
+* navigation bar
+
+Contoh:
+
+```dart
+SafeArea(
+  child: ListView(...)
+)
+```
+
+---
+
+# 14. SingleChildScrollView
+
+Digunakan jika halaman **lebih panjang dari layar**.
+
+Contoh:
+
+```dart
+SingleChildScrollView(
+  child: Column(...)
+)
+```
+
+---
+
+# Ringkasan Konsep Penting
+
+Konsep Flutter yang digunakan di aplikasi ini:
+
+* StatelessWidget
+* StatefulWidget
+* Navigator
+* ListView.builder
+* setState
+* Callback Function
+* TextEditingController
+* SnackBar
+* url_launcher
+* Image.network
+* Image.asset
+
+---
+
+Kalau kamu mau, aku juga bisa buat **1 halaman "cheat sheet Flutter buat kuis praktik"** dari semua kode kamu (biasanya isinya 10 hal yang paling sering ditanya dosen Flutter). Itu **super membantu kalau tiba-tiba ditanya saat demo aplikasi**.
